@@ -40,7 +40,6 @@
     ]
   },
   "devDependencies": {
-    "devDependencies": {
   "autoprefixer": "^x.x.x",
   "postcss": "^x.x.x",
   "tailwindcss": "^x.x.x",
