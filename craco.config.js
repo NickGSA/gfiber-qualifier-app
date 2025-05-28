@@ -1,5 +1,5 @@
 // craco.config.js
-const tailwindcss = require('@tailwindcss/postcss'); // <--- CHANGED HERE!
+const tailwindcss = require('@tailwindcss/postcss'); // <--- THIS LINE IS CRITICAL
 const autoprefixer = require('autoprefixer');
 
 module.exports = {
