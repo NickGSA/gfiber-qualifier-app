@@ -39,10 +39,10 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-  "autoprefixer": "^x.x.x",
-  "postcss": "^x.x.x",
-  "tailwindcss": "^x.x.x",
-  "@craco/craco": "^x.x.x",
-  "@tailwindcss/postcss": "^x.x.x"
-}
+   "devDependencies": {
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.4",
+    "@craco/craco": "^7.1.0",
+    "@tailwindcss/postcss": "^4.1.8"
+  }
