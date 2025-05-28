@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, {  useState, useEffect, useCallback, useMemo } from 'react'; // <--- Make sure to import useMemo
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 // Main App component
@@ -16,7 +16,7 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState('');
 
   // Hardcoded Gfiber plans
-  const gfiberPlans = [
+  const gfiberPlans = useMemo(() => [ // <--- Changed here
     { id: '1gig', speed: '1 Gig', cost: 70 },
     { id: '3gig', speed: '3 Gig', cost: 100 },
     { id: '8gig', speed: '8 Gig', cost: 150 },
