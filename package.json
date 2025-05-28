@@ -45,5 +45,5 @@
   "postcss": "^x.x.x",
   "tailwindcss": "^x.x.x",
   "@craco/craco": "^x.x.x",
-  "@tailwindcss/postcss": "^x.x.x"  <-- THIS MUST BE HERE
+  "@tailwindcss/postcss": "^x.x.x"
 }
