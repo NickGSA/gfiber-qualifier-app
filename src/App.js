@@ -1,4 +1,4 @@
-import React, {  useState, useEffect, useCallback, useMemo } from 'react'; // <--- Make sure to import useMemo
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 // Main App component
@@ -16,11 +16,11 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState('');
 
   // Hardcoded Gfiber plans - NOW MEMOIZED
-const gfiberPlans = useMemo(() => [ // <--- This line is correct
-  { id: '1gig', speed: '1 Gig', cost: 70 },
-  { id: '3gig', speed: '3 Gig', cost: 100 },
-  { id: '8gig', speed: '8 Gig', cost: 150 },
-], []); // <--- THIS IS THE CRITICAL PART: the closing ], []);
+  const gfiberPlans = useMemo(() => [
+    { id: '1gig', speed: '1 Gig', cost: 70 },
+    { id: '3gig', speed: '3 Gig', cost: 100 },
+    { id: '8gig', speed: '8 Gig', cost: 150 },
+  ], []);
 
   // YouTube TV cost
   const youtubeTVCost = 83.00;
@@ -250,7 +250,8 @@ const gfiberPlans = useMemo(() => [ // <--- This line is correct
     };
 
     return (
-      <div className="flex flex-col items-center p-6 bg-white rounded-lg shadow-xl max-w-2xl mx-auto">
+      // *** CHANGE 1: Adjusted padding and max-width for better mobile adaptation ***
+      <div className="flex flex-col items-center p-4 sm:p-6 bg-white rounded-lg shadow-xl max-w-xl sm:max-w-2xl mx-auto">
         <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">Your Gfiber Savings!</h2>
 
         {errorMessage && (
@@ -265,9 +266,11 @@ const gfiberPlans = useMemo(() => [ // <--- This line is correct
           <label className="block text-lg font-medium text-gray-700 mb-3 text-center">
             Adjust Gfiber Internet Plan:
           </label>
-          <div className="flex justify-center space-x-4">
+          {/* *** CHANGE 2: Added flex-wrap and adjusted space-x for responsive radio buttons *** */}
+          <div className="flex flex-wrap justify-center space-x-2 sm:space-x-4">
             {gfiberPlans.map(plan => (
-              <div key={plan.id} className="flex items-center">
+              // Added mb-2 for vertical spacing when wrapping
+              <div key={plan.id} className="flex items-center mb-2 sm:mb-0">
                 <input
                   id={`results-gfiber-plan-${plan.id}`}
                   name="results-gfiber-plan"
@@ -290,8 +293,10 @@ const gfiberPlans = useMemo(() => [ // <--- This line is correct
           <label className="block text-lg font-medium text-gray-700 mb-3 text-center">
             Include YouTube TV in Gfiber Total:
           </label>
-          <div className="flex justify-center space-x-4">
-            <div className="flex items-center">
+          {/* *** CHANGE 3: Added flex-wrap and adjusted space-x for responsive TV bundle buttons *** */}
+          <div className="flex flex-wrap justify-center space-x-2 sm:space-x-4">
+            {/* Added mb-2 for vertical spacing when wrapping */}
+            <div className="flex items-center mb-2 sm:mb-0">
               <input
                 id="tv-toggle-yes"
                 name="tv-toggle"
@@ -305,7 +310,8 @@ const gfiberPlans = useMemo(() => [ // <--- This line is correct
                 Yes (Add ${youtubeTVCost.toFixed(2)}/month)
               </label>
             </div>
-            <div className="flex items-center">
+            {/* Added mb-2 for vertical spacing when wrapping */}
+            <div className="flex items-center mb-2 sm:mb-0">
               <input
                 id="tv-toggle-no"
                 name="tv-toggle"
@@ -355,7 +361,7 @@ const gfiberPlans = useMemo(() => [ // <--- This line is correct
               <YAxis label={{ value: 'Cost ($)', angle: -90, position: 'insideLeft' }} />
               <Tooltip formatter={(value) => `$${value.toFixed(2)}`} />
               <Legend />
-              <Bar dataKey="cost" fill="#4285F4" name="Monthly Cost" radius={[10, 10, 0, 0]} /> {/* Standard Blue */}
+              <Bar dataKey="cost" fill="#4285F4" name="Monthly Cost" radius={[10, 10, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -364,21 +370,22 @@ const gfiberPlans = useMemo(() => [ // <--- This line is correct
         <div className="w-full h-64 mb-8">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
-              data={chartData.map(item => ({ name: item.name, cost: item.cost * 12 }))} // Multiply by 12 for yearly
+              data={chartData.map(item => ({ name: item.name, cost: item.cost * 12 }))}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
               <XAxis dataKey="name" />
               <YAxis label={{ value: 'Cost ($)', angle: -90, position: 'insideLeft' }} />
               <Tooltip formatter={(value) => `$${value.toFixed(2)}`} />
               <Legend />
-              <Bar dataKey="cost" fill="#34A853" name="Yearly Cost" radius={[10, 10, 0, 0]} /> {/* Standard Green */}
+              <Bar dataKey="cost" fill="#34A853" name="Yearly Cost" radius={[10, 10, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
 
         <h3 className="text-2xl font-semibold text-gray-800 mb-4">Why Switch to Gfiber?</h3>
-        <ul className="list-disc list-inside text-lg text-gray-700 space-y-2 mb-8 w-full px-4">
+        {/* *** CHANGE 4: Adjusted horizontal padding for the list items *** */}
+        <ul className="list-disc list-inside text-lg text-gray-700 space-y-2 mb-8 w-full px-2 sm:px-4">
           <li>
             <strong>Symmetrical Speeds:</strong> Enjoy equally fast upload and download speeds, perfect for video calls, gaming, and large file sharing. (Unlike most cable providers).
           </li>
@@ -470,4 +477,3 @@ const gfiberPlans = useMemo(() => [ // <--- This line is correct
 };
 
 export default App;
-
