@@ -15,12 +15,12 @@ const App = () => {
   const [yearlySavings, setYearlySavings] = useState(0);
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Hardcoded Gfiber plans
-  const gfiberPlans = useMemo(() => [ // <--- Changed here
-    { id: '1gig', speed: '1 Gig', cost: 70 },
-    { id: '3gig', speed: '3 Gig', cost: 100 },
-    { id: '8gig', speed: '8 Gig', cost: 150 },
-  ];
+  // Hardcoded Gfiber plans - NOW MEMOIZED
+const gfiberPlans = useMemo(() => [ // <--- This line is correct
+  { id: '1gig', speed: '1 Gig', cost: 70 },
+  { id: '3gig', speed: '3 Gig', cost: 100 },
+  { id: '8gig', speed: '8 Gig', cost: 150 },
+], []); // <--- THIS IS THE CRITICAL PART: the closing ], []);
 
   // YouTube TV cost
   const youtubeTVCost = 83.00;
