@@ -1,16 +1,16 @@
 // craco.config.js
-const tailwindcss = require('tailwindcss');
+const tailwindcss = require('@tailwindcss/postcss'); // <--- CHANGED HERE!
 const autoprefixer = require('autoprefixer');
 
 module.exports = {
   style: {
     postcss: {
-      mode: 'extends', // This tells CRACO to extend React-scripts' internal PostCSS config
+      mode: 'extends',
       loaderOptions: {
         postcssOptions: {
           ident: 'postcss',
           plugins: [
-            tailwindcss('./tailwind.config.js'), // Explicitly pass tailwind.config.js path
+            tailwindcss('./tailwind.config.js'),
             autoprefixer,
           ],
         },
