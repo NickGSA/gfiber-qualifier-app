@@ -234,9 +234,9 @@ const App = () => {
     ];
 
     const speedChartData = [
-      { name: 'Current Download', speed: parseInt(currentSpeed) || 0, fill: '#FF5733' },
-      { name: 'Gfiber Download', speed: recommendedGfiberPlan.speedValue || 0, fill: '#4285F4' },
-      { name: 'Current Upload', speed: parseInt(currentUploadSpeed) || 0, fill: '#FFC300' },
+      { name: 'Current Download', speed: parseInt(currentSpeed) || 0, fill: '#4285F4' },
+      { name: 'Gfiber Download', speed: recommendedGfiberPlan.speedValue || 0, fill: '#34A853' },
+      { name: 'Current Upload', speed: parseInt(currentUploadSpeed) || 0, fill: '#4285F4' },
       { name: 'Gfiber Upload', speed: recommendedGfiberPlan.speedValue || 0, fill: '#34A853' },
     ];
 
@@ -352,7 +352,16 @@ const App = () => {
               <YAxis label={{ value: 'Cost ($)', angle: -90, position: 'insideLeft' }} />
               <Tooltip formatter={(value) => `$${value.toFixed(2)}`} />
               <Legend />
-              <Bar dataKey="cost" fill="#4285F4" name="Monthly Cost" radius={[10, 10, 0, 0]} />
+              <Bar dataKey="cost" name="Monthly Cost" radius={[10, 10, 0, 0]} >
+                {
+                  chartData.map((entry, index) => (
+                    <Bar
+                      key={`cost-bar-${index}`}
+                      fill={entry.name.includes('Current') ? '#4285F4' : '#34A853'}
+                    />
+                  ))
+                }
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -472,3 +481,4 @@ const App = () => {
 };
 
 export default App;
+
