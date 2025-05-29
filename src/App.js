@@ -360,7 +360,7 @@ const App = () => {
               <XAxis dataKey="category" />
               <YAxis label={{ value: 'Cost ($)', angle: -90, position: 'insideLeft', offset: 15 }} />
               <Tooltip formatter={(value) => `$${value.toFixed(2)}`} />
-              <Legend />
+              <Legend wrapperStyle={{ paddingTop: 20 }} /> {/* Added paddingTop to Legend */}
               <Bar dataKey="Current Plan" fill="#4285F4" name="Current Plan" radius={[10, 10, 0, 0]} />
               <Bar dataKey="Gfiber Plan" fill="#34A853" name="Gfiber Plan" radius={[10, 10, 0, 0]} />
             </BarChart>
@@ -375,11 +375,11 @@ const App = () => {
               data={speedChartData}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
-              {/* Changed position to 'bottom' and adjusted offset for spacing below numbers */}
-              <XAxis type="number" label={{ value: 'Speed (Mbps)', angle: 0, position: 'bottom', offset: 0 }} />
+              {/* Increased offset to 20 to lower the label more */}
+              <XAxis type="number" label={{ value: 'Speed (Mbps)', angle: 0, position: 'bottom', offset: 20 }} />
               <YAxis type="category" dataKey="category" />
               <Tooltip formatter={(value) => `${value.toLocaleString()} Mbps`} />
-              <Legend />
+              <Legend wrapperStyle={{ paddingTop: 20 }} /> {/* Added paddingTop to Legend */}
               <Bar dataKey="Gfiber Plan" fill="#34A853" name="Gfiber Plan" radius={[0, 10, 10, 0]} />
               <Bar dataKey="Current Plan" fill="#4285F4" name="Current Plan" radius={[0, 10, 10, 0]} />
             </BarChart>
@@ -433,7 +433,7 @@ const App = () => {
         </ul>
 
         <p className="text-sm text-gray-500 mt-4 text-center">
-          *All Gfiber, YouTube TV, and competitor plan prices are examples for demonstration purposes only and may vary based on location, promotions, and specific service agreements. Please verify current pricing with Gfiber and competitor representatives.
+          *All Gfiber, YouTube TV, and competitor plan prices are examples for demonstration purposes only and may vary based on location, promotions and specific service agreements. Please verify current pricing with Gfiber and competitor representatives.
         </p>
 
         <button
