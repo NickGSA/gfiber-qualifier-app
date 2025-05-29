@@ -22,6 +22,8 @@ const App = () => {
   const [monthlySavings, setMonthlySavings] = useState(0);
   const [yearlySavings, setYearlySavings] = useState(0);
   const [errorMessage, setErrorMessage] = useState('');
+  // New state for controlling the visibility of the "Why Switch to Gfiber?" section
+  const [showWhySwitchSection, setShowWhySwitchSection] = useState(false);
 
   const calculateAndSetSavings = useCallback(() => {
     setErrorMessage('');
@@ -233,9 +235,14 @@ const App = () => {
 
     const currentISPName = currentISP || 'Current Plan'; // Use selected ISP name
 
-    const chartData = [
-      { name: currentISPName, cost: parseFloat(currentCost) },
-      { name: `Gfiber${hasTVBundle ? ' + YouTube TV' : ''}`, cost: gfiberTotalCostForChart },
+    // Data for cost comparison charts (Monthly and Yearly)
+    // Structured to allow separate bars for Current Plan and Gfiber Plan
+    const costComparisonData = [
+      {
+        category: 'Cost', // A dummy category for the X-axis
+        'Current Plan': parseFloat(currentCost),
+        'Gfiber Plan': gfiberTotalCostForChart,
+      },
     ];
 
     // Data for speed comparison chart
@@ -252,16 +259,20 @@ const App = () => {
       },
     ];
 
-    const getStarRating = (ispType) => {
+    // Modified getStarRating to return status icons and text
+    const getReliabilityStatus = (ispType) => {
         if (ispType === 'Gfiber') {
-            return '★★★★★'; // 5 stars for Fiber
+            return { icon: '✅', text: 'Excellent' }; // Checkmark for Gfiber
         }
         if (ispType === 'T-Mobile Home Internet') {
-            return '★★★☆☆'; // 3 stars for Fixed Wireless
+            return { icon: '⚠️', text: 'Good' }; // Warning for Fixed Wireless
         }
         // Default for Cable (Spectrum, AT&T, Astound)
-        return '★★★★☆'; // 4 stars for Cable
+        return { icon: '📊', text: 'Average' }; // Chart icon for Cable
     };
+
+    const gfiberReliability = getReliabilityStatus('Gfiber');
+    const currentISPReliability = getReliabilityStatus(currentISP);
 
 
     const handleGfiberPlanChange = (event) => {
@@ -369,33 +380,22 @@ const App = () => {
         <div className="w-full h-64 mb-8 bg-blue-50 p-4 rounded-lg">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
-              data={chartData}
+              data={costComparisonData}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
-              <XAxis dataKey="name" />
+              <XAxis dataKey="category" />
               <YAxis label={{ value: 'Cost ($)', angle: -90, position: 'insideLeft', offset: 15 }} />
               <Tooltip formatter={(value) => `$${value.toFixed(2)}`} />
               <Legend wrapperStyle={{ paddingTop: 20 }} />
-              <Bar dataKey="cost" fill="#4285F4" name="Monthly Cost" radius={[10, 10, 0, 0]} />
+              {/* Blue for Current Plan */}
+              <Bar dataKey="Current Plan" fill="#4285F4" name={currentISPName} radius={[10, 10, 0, 0]} />
+              {/* Green for Gfiber Plan */}
+              <Bar dataKey="Gfiber Plan" fill="#34A853" name={`Gfiber${hasTVBundle ? ' + YouTube TV' : ''}`} radius={[10, 10, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
-        <h3 className="text-2xl font-semibold text-gray-800 mb-4">Yearly Cost Comparison</h3>
-        <div className="w-full h-64 mb-8 bg-blue-50 p-4 rounded-lg">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={chartData.map(item => ({ name: item.name, cost: item.cost * 12 }))}
-              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            >
-              <XAxis dataKey="name" />
-              <YAxis label={{ value: 'Cost ($)', angle: -90, position: 'insideLeft', offset: 15 }} />
-              <Tooltip formatter={(value) => `$${value.toFixed(2)}`} />
-              <Legend wrapperStyle={{ paddingTop: 20 }} />
-              <Bar dataKey="cost" fill="#34A853" name="Yearly Cost" radius={[10, 10, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+        {/* Yearly Cost Comparison Chart has been removed */}
 
         <h3 className="text-2xl font-semibold text-gray-800 mb-4">Speed Comparison (Mbps)</h3>
         <div className="w-full h-64 mb-8 bg-blue-50 p-4 rounded-lg">
@@ -410,22 +410,26 @@ const App = () => {
               <Tooltip formatter={(value) => `${value.toLocaleString()} Mbps`} />
               <Legend wrapperStyle={{ paddingTop: 20 }} />
               <Bar dataKey="Gfiber Plan" fill="#34A853" name="Gfiber Plan" radius={[0, 10, 10, 0]} />
-              <Bar dataKey={currentISPName} fill="#4285F4" name={currentISPName} radius={[0, 10, 10, 0]} /> {/* Use ISP name here */}
+              <Bar dataKey={currentISPName} fill="#4285F4" name={currentISPName} radius={[0, 10, 10, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
-        {/* New: Reliability Score */}
+        {/* Reliability Score section with new icons */}
         <h3 className="text-2xl font-semibold text-gray-800 mb-4">Reliability Score (Outage Frequency)</h3>
         <div className="w-full p-4 bg-yellow-50 rounded-lg shadow-sm mb-8 text-center">
           <div className="flex justify-around items-center mb-4">
             <div className="flex flex-col items-center">
               <p className="text-xl font-bold text-gray-800">Gfiber</p>
-              <p className="text-3xl text-yellow-500 font-bold">{getStarRating('Gfiber')}</p>
+              <p className="text-3xl font-bold text-yellow-700">
+                {gfiberReliability.icon} {gfiberReliability.text}
+              </p>
             </div>
             <div className="flex flex-col items-center">
               <p className="text-xl font-bold text-gray-800">{currentISPName}</p>
-              <p className="text-3xl text-yellow-500 font-bold">{getStarRating(currentISP)}</p>
+              <p className="text-3xl font-bold text-yellow-700">
+                {currentISPReliability.icon} {currentISPReliability.text}
+              </p>
             </div>
           </div>
           <p className="text-sm text-gray-600 italic">
@@ -433,7 +437,7 @@ const App = () => {
           </p>
         </div>
 
-        {/* New: Value Beyond Cost Infographic */}
+        {/* Value Beyond Cost Infographic - Remains unchanged */}
         <h3 className="text-2xl font-semibold text-gray-800 mb-4">Gfiber: Value Beyond the Monthly Bill</h3>
         <div className="w-full p-6 bg-purple-50 rounded-lg shadow-sm mb-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -468,58 +472,69 @@ const App = () => {
             </div>
         </div>
 
-        <h3 className="text-2xl font-semibold text-gray-800 mb-4">Why Switch to Gfiber?</h3>
-        <ul className="list-disc list-inside text-lg text-gray-700 space-y-2 mb-8 w-full px-4">
-          <li>
-            <strong>Blazing Fast Uploads:</strong> Essential for flawless video conferencing, rapid cloud backups, smooth live streaming, and effortlessly sharing large files.
-          </li>
-          <li>
-            <strong>True Symmetrical Performance:</strong> Experience equally fast download and upload speeds, providing a balanced and powerful internet connection for all your online activities, unlike typical cable.
-          </li>
-          <li>
-            <strong>No Data Caps:</strong> Stream, game, and browse as much as you want without worrying about hidden fees or throttling.
-          </li>
-          <li>
-            <strong>Reliability:</strong> Fiber optic internet is less susceptible to outages and slowdowns caused by weather or network congestion.
-          </li>
-          <li>
-            <strong>Future-Proof Technology:</strong> Gfiber's network is built for tomorrow's internet demands, ensuring you're ready for new technologies.
-          </li>
-          <li>
-            <strong>Transparent Pricing:</strong> Clear, straightforward pricing with no hidden fees or annual contracts.
-          </li>
-          <li>
-            <strong>Dedicated Customer Support:</strong> Experience highly-rated customer service focused on your satisfaction.
-          </li>
-          {hasTVBundle && (
-            <>
-              <li className="mt-4">
-                <strong>Benefits of Gfiber + YouTube TV:</strong>
-              </li>
-              <ul className="list-circle list-inside ml-4 space-y-1">
-                <li>
-                  <strong>Flexibility:</strong> No long-term contracts, cancel anytime.
-                </li>
-                <li>
-                  <strong>Cloud DVR:</strong> Record your favorite shows and watch them anywhere.
-                </li>
-                <li>
-                  <strong>No Equipment Fees:</strong> Say goodbye to costly cable box rentals.
-                </li>
-                <li>
-                  <strong>Stream on Multiple Devices:</b> Watch on your phone, tablet, smart TV, and more.
-                </li>
-                <li>
-                  <strong>Comprehensive Channels:</strong> Access a wide array of live TV channels from major networks.
-                </li>
-              </ul>
-            </>
-          )}
-        </ul>
+        {/* Collapsible "Why Switch to Gfiber?" section */}
+        <button
+          onClick={() => setShowWhySwitchSection(!showWhySwitchSection)}
+          className="w-full px-6 py-3 mb-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-300 ease-in-out flex items-center justify-center"
+        >
+          Why Switch to Gfiber? {showWhySwitchSection ? '▲' : '▼'}
+        </button>
 
-        <p className="text-sm text-gray-500 mt-4 text-center">
-          *All Gfiber, YouTube TV, and competitor plan prices are examples for demonstration purposes only and may vary based on location, promotions, and specific service agreements. Please verify current pricing with Gfiber and competitor representatives.
-        </p>
+        {showWhySwitchSection && (
+          <div className="w-full transition-all duration-300 ease-in-out overflow-hidden">
+            <ul className="list-disc list-inside text-lg text-gray-700 space-y-2 mb-8 w-full px-4">
+              <li>
+                <strong>Blazing Fast Uploads:</strong> Essential for flawless video conferencing, rapid cloud backups, smooth live streaming, and effortlessly sharing large files.
+              </li>
+              <li>
+                <strong>True Symmetrical Performance:</strong> Experience equally fast download and upload speeds, providing a balanced and powerful internet connection for all your online activities, unlike typical cable.
+              </li>
+              <li>
+                <strong>No Data Caps:</strong> Stream, game, and browse as much as you want without worrying about hidden fees or throttling.
+              </li>
+              <li>
+                <strong>Reliability:</strong> Fiber optic internet is less susceptible to outages and slowdowns caused by weather or network congestion.
+              </li>
+              <li>
+                <strong>Future-Proof Technology:</strong> Gfiber's network is built for tomorrow's internet demands, ensuring you're ready for new technologies.
+              </li>
+              <li>
+                <strong>Transparent Pricing:</strong> Clear, straightforward pricing with no hidden fees or annual contracts.
+              </li>
+              <li>
+                <strong>Dedicated Customer Support:</strong> Experience highly-rated customer service focused on your satisfaction.
+              </li>
+              {hasTVBundle && (
+                <>
+                  <li className="mt-4">
+                    <strong>Benefits of Gfiber + YouTube TV:</strong>
+                  </li>
+                  <ul className="list-circle list-inside ml-4 space-y-1">
+                    <li>
+                      <strong>Flexibility:</strong> No long-term contracts, cancel anytime.
+                    </li>
+                    <li>
+                      <strong>Cloud DVR:</strong> Record your favorite shows and watch them anywhere.
+                    </li>
+                    <li>
+                      <strong>No Equipment Fees:</strong> Say goodbye to costly cable box rentals.
+                    </li>
+                    <li>
+                      <strong>Stream on Multiple Devices:</strong> Watch on your phone, tablet, smart TV, and more.
+                    </li>
+                    <li>
+                      <strong>Comprehensive Channels:</strong> Access a wide array of live TV channels from major networks.
+                    </li>
+                  </ul>
+                </>
+              )}
+            </ul>
+
+            <p className="text-sm text-gray-500 mt-4 text-center">
+              *All Gfiber, YouTube TV, and competitor plan prices are examples for demonstration purposes only and may vary based on location, promotions, and specific service agreements. Please verify current pricing with Gfiber and competitor representatives.
+            </p>
+          </div>
+        )}
 
         <button
           onClick={() => {
@@ -534,6 +549,7 @@ const App = () => {
             setMonthlySavings(0);
             setYearlySavings(0);
             setErrorMessage('');
+            setShowWhySwitchSection(false); // Reset collapsible section state
           }}
           className="mt-8 w-full px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition duration-300 ease-in-out"
         >
