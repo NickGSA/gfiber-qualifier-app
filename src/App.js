@@ -47,7 +47,7 @@ const App = () => {
     setRecommendedGfiberPlan(currentGfiberPlan);
     setMonthlySavings(calculatedMonthlySavings);
     setYearlySavings(calculatedYearlySavings);
-  }, [selectedGfiberPlanId, hasTVBundle, currentCost, youtubeTVCost]); // gfiberPlans removed from dependencies as it's now outside
+  }, [selectedGfiberPlanId, hasTVBundle, currentCost]); // youtubeTVCost removed from dependencies as it's a constant outside the component
 
   useEffect(() => {
     if (step === 'results' && currentCost && selectedGfiberPlanId) {
