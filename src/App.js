@@ -1,10 +1,20 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
+// Define gfiberPlans outside the component so it's not recreated on every render
+const gfiberPlans = [
+  { id: '1gig', speed: '1 Gig', cost: 70, speedValue: 1000 }, // Added speedValue for consistency with previous versions
+  { id: '3gig', speed: '3 Gig', cost: 100, speedValue: 3000 },
+  { id: '8gig', speed: '8 Gig', cost: 150, speedValue: 8000 },
+];
+
+const youtubeTVCost = 83.00;
+
 const App = () => {
   const [step, setStep] = useState('welcome');
   const [currentISP, setCurrentISP] = useState('');
   const [currentSpeed, setCurrentSpeed] = useState('');
+  const [currentUploadSpeed, setCurrentUploadSpeed] = useState(''); // Added this back as it was in the previous version
   const [currentCost, setCurrentCost] = useState('');
   const [hasTVBundle, setHasTVBundle] = useState(false);
   const [selectedGfiberPlanId, setSelectedGfiberPlanId] = useState('1gig');
@@ -12,14 +22,6 @@ const App = () => {
   const [monthlySavings, setMonthlySavings] = useState(0);
   const [yearlySavings, setYearlySavings] = useState(0);
   const [errorMessage, setErrorMessage] = useState('');
-
-  const gfiberPlans = [
-    { id: '1gig', speed: '1 Gig', cost: 70 },
-    { id: '3gig', speed: '3 Gig', cost: 100 },
-    { id: '8gig', speed: '8 Gig', cost: 150 },
-  ];
-
-  const youtubeTVCost = 83.00;
 
   const calculateAndSetSavings = useCallback(() => {
     setErrorMessage('');
@@ -45,7 +47,7 @@ const App = () => {
     setRecommendedGfiberPlan(currentGfiberPlan);
     setMonthlySavings(calculatedMonthlySavings);
     setYearlySavings(calculatedYearlySavings);
-  }, [selectedGfiberPlanId, hasTVBundle, currentCost, gfiberPlans, youtubeTVCost]);
+  }, [selectedGfiberPlanId, hasTVBundle, currentCost, youtubeTVCost]); // gfiberPlans removed from dependencies as it's now outside
 
   useEffect(() => {
     if (step === 'results' && currentCost && selectedGfiberPlanId) {
@@ -56,12 +58,16 @@ const App = () => {
   const handleISPDetailsSubmit = () => {
     setErrorMessage('');
 
-    if (!currentISP || !currentSpeed || !currentCost || !selectedGfiberPlanId) {
+    if (!currentISP || !currentSpeed || !currentUploadSpeed || !currentCost || !selectedGfiberPlanId) { // Added currentUploadSpeed check
       setErrorMessage('Please fill in all details and select a Gfiber plan.');
       return;
     }
     if (isNaN(parseInt(currentSpeed)) || parseInt(currentSpeed) <= 0) {
-      setErrorMessage('Please enter a valid current speed (e.g., 300).');
+      setErrorMessage('Please enter a valid current download speed (e.g., 300).');
+      return;
+    }
+    if (isNaN(parseInt(currentUploadSpeed)) || parseInt(currentUploadSpeed) <= 0) { // Added validation for upload speed
+      setErrorMessage('Please enter a valid current upload speed (e.g., 20).');
       return;
     }
     const parsedCurrentCost = parseFloat(currentCost);
@@ -128,6 +134,20 @@ const App = () => {
           value={currentSpeed}
           onChange={(e) => setCurrentSpeed(e.target.value)}
           placeholder="e.g., 300"
+        />
+      </div>
+
+      <div className="w-full mb-4">
+        <label htmlFor="currentUploadSpeed" className="block text-sm font-medium text-gray-700 mb-2">
+          Customer's Current Upload Speed (e.g., 20 for 20 Mbps)
+        </label>
+        <input
+          type="number"
+          id="currentUploadSpeed"
+          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          value={currentUploadSpeed}
+          onChange={(e) => setCurrentUploadSpeed(e.target.value)}
+          placeholder="e.g., 20"
         />
       </div>
 
@@ -214,6 +234,20 @@ const App = () => {
     const chartData = [
       { name: 'Current Plan', cost: parseFloat(currentCost) },
       { name: `Gfiber${hasTVBundle ? ' + YouTube TV' : ''}`, cost: gfiberTotalCostForChart },
+    ];
+
+    // Data for speed comparison chart
+    const speedChartData = [
+      {
+        category: 'Download',
+        'Current Plan': parseInt(currentSpeed) || 0,
+        'Gfiber Plan': recommendedGfiberPlan.speedValue || 0,
+      },
+      {
+        category: 'Upload',
+        'Current Plan': parseInt(currentUploadSpeed) || 0,
+        'Gfiber Plan': recommendedGfiberPlan.speedValue || 0, // Assuming symmetrical for Gfiber
+      },
     ];
 
     const handleGfiberPlanChange = (event) => {
@@ -349,6 +383,23 @@ const App = () => {
           </ResponsiveContainer>
         </div>
 
+        <h3 className="text-2xl font-semibold text-gray-800 mb-4">Speed Comparison (Mbps)</h3>
+        <div className="w-full h-64 mb-8 bg-blue-50 p-4 rounded-lg">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              layout="vertical"
+              data={speedChartData}
+              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            >
+              <XAxis type="number" label={{ value: 'Speed (Mbps)', angle: 0, position: 'bottom', offset: 5 }} />
+              <YAxis type="category" dataKey="category" />
+              <Tooltip formatter={(value) => `${value.toLocaleString()} Mbps`} />
+              <Legend wrapperStyle={{ paddingTop: 20 }} />
+              <Bar dataKey="Gfiber Plan" fill="#34A853" name="Gfiber Plan" radius={[0, 10, 10, 0]} />
+              <Bar dataKey="Current Plan" fill="#4285F4" name="Current Plan" radius={[0, 10, 10, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
 
         <h3 className="text-2xl font-semibold text-gray-800 mb-4">Why Switch to Gfiber?</h3>
         <ul className="list-disc list-inside text-lg text-gray-700 space-y-2 mb-8 w-full px-4">
@@ -408,6 +459,7 @@ const App = () => {
             setStep('welcome');
             setCurrentISP('');
             setCurrentSpeed('');
+            setCurrentUploadSpeed('');
             setCurrentCost('');
             setHasTVBundle(false);
             setSelectedGfiberPlanId('1gig');
