@@ -228,9 +228,13 @@ const App = () => {
     const gfiberInternetCost = recommendedGfiberPlan.cost;
     const gfiberTotalCostForChart = hasTVBundle ? gfiberInternetCost + youtubeTVCost : gfiberInternetCost;
 
+    // UPDATED: Chart data for Monthly Cost Comparison
     const chartData = [
-      { name: 'Current Plan', cost: parseFloat(currentCost) },
-      { name: `Gfiber${hasTVBundle ? ' + YouTube TV' : ''}`, cost: gfiberTotalCostForChart },
+      {
+        category: 'Monthly Cost',
+        'Current Plan': parseFloat(currentCost),
+        'Gfiber Plan': gfiberTotalCostForChart,
+      },
     ];
 
     const speedChartData = [
@@ -354,21 +358,13 @@ const App = () => {
               data={chartData}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
-              <XAxis dataKey="name" />
+              <XAxis dataKey="category" /> {/* Changed dataKey to 'category' */}
               <YAxis label={{ value: 'Cost ($)', angle: -90, position: 'insideLeft' }} />
               <Tooltip formatter={(value) => `$${value.toFixed(2)}`} />
               <Legend />
-              {
-                chartData.map((entry, index) => (
-                  <Bar
-                    key={`cost-bar-${index}`}
-                    dataKey="cost"
-                    fill={entry.name.includes('Current') ? '#4285F4' : '#34A853'}
-                    name={entry.name}
-                    radius={[10, 10, 0, 0]}
-                  />
-                ))
-              }
+              {/* Explicitly define two Bar components for Current and Gfiber */}
+              <Bar dataKey="Gfiber Plan" fill="#34A853" name="Gfiber Plan" radius={[10, 10, 0, 0]} />
+              <Bar dataKey="Current Plan" fill="#4285F4" name="Current Plan" radius={[10, 10, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -385,6 +381,7 @@ const App = () => {
               <YAxis type="category" dataKey="category" />
               <Tooltip formatter={(value) => `${value.toLocaleString()} Mbps`} />
               <Legend />
+              {/* Order of Bars determines render order: Gfiber on top, then Current */}
               <Bar dataKey="Gfiber Plan" fill="#34A853" name="Gfiber Plan" radius={[0, 10, 10, 0]} />
               <Bar dataKey="Current Plan" fill="#4285F4" name="Current Plan" radius={[0, 10, 10, 0]} />
             </BarChart>
