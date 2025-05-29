@@ -360,7 +360,7 @@ const App = () => {
               <XAxis dataKey="category" />
               <YAxis label={{ value: 'Cost ($)', angle: -90, position: 'insideLeft', offset: 15 }} />
               <Tooltip formatter={(value) => `$${value.toFixed(2)}`} />
-              <Legend wrapperStyle={{ paddingTop: 20 }} /> {/* Added paddingTop to Legend */}
+              <Legend wrapperStyle={{ paddingTop: 20 }} />
               <Bar dataKey="Current Plan" fill="#4285F4" name="Current Plan" radius={[10, 10, 0, 0]} />
               <Bar dataKey="Gfiber Plan" fill="#34A853" name="Gfiber Plan" radius={[10, 10, 0, 0]} />
             </BarChart>
@@ -375,11 +375,11 @@ const App = () => {
               data={speedChartData}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
-              {/* Increased offset to 20 to lower the label more */}
-              <XAxis type="number" label={{ value: 'Speed (Mbps)', angle: 0, position: 'bottom', offset: 20 }} />
+              {/* Adjusted offset to 10 */}
+              <XAxis type="number" label={{ value: 'Speed (Mbps)', angle: 0, position: 'bottom', offset: 10 }} />
               <YAxis type="category" dataKey="category" />
               <Tooltip formatter={(value) => `${value.toLocaleString()} Mbps`} />
-              <Legend wrapperStyle={{ paddingTop: 20 }} /> {/* Added paddingTop to Legend */}
+              <Legend wrapperStyle={{ paddingTop: 20 }} />
               <Bar dataKey="Gfiber Plan" fill="#34A853" name="Gfiber Plan" radius={[0, 10, 10, 0]} />
               <Bar dataKey="Current Plan" fill="#4285F4" name="Current Plan" radius={[0, 10, 10, 0]} />
             </BarChart>
