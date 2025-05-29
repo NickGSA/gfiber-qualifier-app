@@ -234,10 +234,16 @@ const App = () => {
     ];
 
     const speedChartData = [
-      { name: 'Current Download', speed: parseInt(currentSpeed) || 0, fill: '#4285F4' },
-      { name: 'Gfiber Download', speed: recommendedGfiberPlan.speedValue || 0, fill: '#34A853' },
-      { name: 'Current Upload', speed: parseInt(currentUploadSpeed) || 0, fill: '#4285F4' },
-      { name: 'Gfiber Upload', speed: recommendedGfiberPlan.speedValue || 0, fill: '#34A853' },
+      {
+        category: 'Download',
+        'Current Plan': parseInt(currentSpeed) || 0,
+        'Gfiber Plan': recommendedGfiberPlan.speedValue || 0,
+      },
+      {
+        category: 'Upload',
+        'Current Plan': parseInt(currentUploadSpeed) || 0,
+        'Gfiber Plan': recommendedGfiberPlan.speedValue || 0,
+      },
     ];
 
     const handleGfiberPlanChange = (event) => {
@@ -370,20 +376,16 @@ const App = () => {
         <div className="w-full h-64 mb-8">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
+              layout="vertical"
               data={speedChartData}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
-              <XAxis dataKey="name" />
-              <YAxis label={{ value: 'Speed (Mbps)', angle: -90, position: 'insideLeft' }} />
+              <XAxis type="number" label={{ value: 'Speed (Mbps)', angle: 0, position: 'insideBottom', dy: 10 }} />
+              <YAxis type="category" dataKey="category" />
               <Tooltip formatter={(value) => `${value.toLocaleString()} Mbps`} />
               <Legend />
-              <Bar dataKey="speed" name="Speed" radius={[10, 10, 0, 0]} >
-                {
-                  speedChartData.map((entry, index) => (
-                    <Bar key={`bar-${index}`} fill={entry.fill} />
-                  ))
-                }
-              </Bar>
+              <Bar dataKey="Gfiber Plan" fill="#34A853" name="Gfiber Plan" radius={[0, 10, 10, 0]} />
+              <Bar dataKey="Current Plan" fill="#4285F4" name="Current Plan" radius={[0, 10, 10, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
