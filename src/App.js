@@ -345,7 +345,8 @@ const App = () => {
           </p>
           {monthlySavings < 0 && (
             <p className="text-red-600 text-sm mt-2">
-              (Note: Gfiber cost is currently higher for this comparison. Focus on other benefits!)
+              {/* Updated message */}
+              (Note: Gfiber cost is currently higher for this comparison. This configuration prioritizes high performance and benefits over pricing)
             </p>
           )}
         </div>
@@ -388,6 +389,9 @@ const App = () => {
 
         <h3 className="text-2xl font-semibold text-gray-800 mb-4">Why Switch to Gfiber?</h3>
         <ul className="list-disc list-inside text-lg text-gray-700 space-y-2 mb-8 w-full px-2 sm:px-4">
+          <li>
+            <strong>Superior Upload Speed:</strong> Crucial for seamless video calls, quick cloud backups, online gaming, and effortlessly sharing large files.
+          </li>
           <li>
             <strong>Symmetrical Speeds:</strong> Enjoy equally fast upload and download speeds, perfect for video calls, gaming, and large file sharing. (Unlike most cable providers).
           </li>
