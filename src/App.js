@@ -358,7 +358,6 @@ const App = () => {
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
               <XAxis dataKey="category" />
-              {/* Added offset to YAxis label for consistent spacing */}
               <YAxis label={{ value: 'Cost ($)', angle: -90, position: 'insideLeft', offset: 15 }} />
               <Tooltip formatter={(value) => `$${value.toFixed(2)}`} />
               <Legend />
@@ -376,8 +375,7 @@ const App = () => {
               data={speedChartData}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
-              {/* Replaced dy with offset for consistent spacing */}
-              <XAxis type="number" label={{ value: 'Speed (Mbps)', angle: 0, position: 'insideBottom', offset: 15 }} />
+              <XAxis type="number" label={{ value: 'Speed (Mbps)', angle: 0, position: 'insideBottom', offset: 30 }} />
               <YAxis type="category" dataKey="category" />
               <Tooltip formatter={(value) => `${value.toLocaleString()} Mbps`} />
               <Legend />
