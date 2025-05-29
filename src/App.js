@@ -230,7 +230,7 @@ const App = () => {
 
     const chartData = [
       {
-        category: 'Cost', // Changed to a generic category for the XAxis
+        category: 'Cost',
         'Current Plan': parseFloat(currentCost),
         'Gfiber Plan': gfiberTotalCostForChart,
       },
@@ -351,17 +351,17 @@ const App = () => {
         </div>
 
         <h3 className="text-2xl font-semibold text-gray-800 mb-4">Monthly Cost Comparison</h3>
-        <div className="w-full h-64 mb-8 bg-blue-50 p-4 rounded-lg"> {/* Added background and padding */}
+        <div className="w-full h-64 mb-8 bg-blue-50 p-4 rounded-lg">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={chartData}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
               <XAxis dataKey="category" />
-              <YAxis label={{ value: 'Cost ($)', angle: -90, position: 'insideLeft' }} />
+              {/* Added offset to YAxis label for consistent spacing */}
+              <YAxis label={{ value: 'Cost ($)', angle: -90, position: 'insideLeft', offset: 15 }} />
               <Tooltip formatter={(value) => `$${value.toFixed(2)}`} />
               <Legend />
-              {/* Order changed: Current Plan then Gfiber Plan */}
               <Bar dataKey="Current Plan" fill="#4285F4" name="Current Plan" radius={[10, 10, 0, 0]} />
               <Bar dataKey="Gfiber Plan" fill="#34A853" name="Gfiber Plan" radius={[10, 10, 0, 0]} />
             </BarChart>
@@ -369,18 +369,18 @@ const App = () => {
         </div>
 
         <h3 className="text-2xl font-semibold text-gray-800 mb-4">Speed Comparison (Mbps)</h3>
-        <div className="w-full h-64 mb-8 bg-blue-50 p-4 rounded-lg"> {/* Added background and padding */}
+        <div className="w-full h-64 mb-8 bg-blue-50 p-4 rounded-lg">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               layout="vertical"
               data={speedChartData}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
-              <XAxis type="number" label={{ value: 'Speed (Mbps)', angle: 0, position: 'insideBottom', dy: 10 }} />
+              {/* Replaced dy with offset for consistent spacing */}
+              <XAxis type="number" label={{ value: 'Speed (Mbps)', angle: 0, position: 'insideBottom', offset: 15 }} />
               <YAxis type="category" dataKey="category" />
               <Tooltip formatter={(value) => `${value.toLocaleString()} Mbps`} />
               <Legend />
-              {/* Order of Bars determines render order: Gfiber on top, then Current */}
               <Bar dataKey="Gfiber Plan" fill="#34A853" name="Gfiber Plan" radius={[0, 10, 10, 0]} />
               <Bar dataKey="Current Plan" fill="#4285F4" name="Current Plan" radius={[0, 10, 10, 0]} />
             </BarChart>
