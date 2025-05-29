@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const App = () => {
   const [step, setStep] = useState('welcome');
   const [currentISP, setCurrentISP] = useState('');
   const [currentSpeed, setCurrentSpeed] = useState('');
-  const [currentUploadSpeed, setCurrentUploadSpeed] = useState('');
   const [currentCost, setCurrentCost] = useState('');
   const [hasTVBundle, setHasTVBundle] = useState(false);
   const [selectedGfiberPlanId, setSelectedGfiberPlanId] = useState('1gig');
@@ -14,11 +13,11 @@ const App = () => {
   const [yearlySavings, setYearlySavings] = useState(0);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const gfiberPlans = useMemo(() => [
-    { id: '1gig', speed: '1 Gig', speedValue: 1000, cost: 70 },
-    { id: '3gig', speed: '3 Gig', speedValue: 3000, cost: 100 },
-    { id: '8gig', speed: '8 Gig', speedValue: 8000, cost: 150 },
-  ], []);
+  const gfiberPlans = [
+    { id: '1gig', speed: '1 Gig', cost: 70 },
+    { id: '3gig', speed: '3 Gig', cost: 100 },
+    { id: '8gig', speed: '8 Gig', cost: 150 },
+  ];
 
   const youtubeTVCost = 83.00;
 
@@ -36,8 +35,8 @@ const App = () => {
 
     const parsedCurrentCost = parseFloat(currentCost);
     if (isNaN(parsedCurrentCost) || parsedCurrentCost <= 0) {
-      setErrorMessage('Current monthly cost is invalid. Please go back and correct it.');
-      return;
+        setErrorMessage('Current monthly cost is invalid. Please go back and correct it.');
+        return;
     }
 
     const calculatedMonthlySavings = parsedCurrentCost - gfiberTotalCost;
@@ -57,16 +56,12 @@ const App = () => {
   const handleISPDetailsSubmit = () => {
     setErrorMessage('');
 
-    if (!currentISP || !currentSpeed || !currentUploadSpeed || !currentCost || !selectedGfiberPlanId) {
+    if (!currentISP || !currentSpeed || !currentCost || !selectedGfiberPlanId) {
       setErrorMessage('Please fill in all details and select a Gfiber plan.');
       return;
     }
     if (isNaN(parseInt(currentSpeed)) || parseInt(currentSpeed) <= 0) {
-      setErrorMessage('Please enter a valid current download speed (e.g., 300).');
-      return;
-    }
-    if (isNaN(parseInt(currentUploadSpeed)) || parseInt(currentUploadSpeed) <= 0) {
-      setErrorMessage('Please enter a valid current upload speed (e.g., 20).');
+      setErrorMessage('Please enter a valid current speed (e.g., 300).');
       return;
     }
     const parsedCurrentCost = parseFloat(currentCost);
@@ -131,20 +126,6 @@ const App = () => {
           value={currentSpeed}
           onChange={(e) => setCurrentSpeed(e.target.value)}
           placeholder="e.g., 300"
-        />
-      </div>
-
-      <div className="w-full mb-4">
-        <label htmlFor="currentUploadSpeed" className="block text-sm font-medium text-gray-700 mb-2">
-          Customer's Current Upload Speed (e.g., 20 for 20 Mbps)
-        </label>
-        <input
-          type="number"
-          id="currentUploadSpeed"
-          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-          value={currentUploadSpeed}
-          onChange={(e) => setCurrentUploadSpeed(e.target.value)}
-          placeholder="e.g., 20"
         />
       </div>
 
@@ -229,24 +210,8 @@ const App = () => {
     const gfiberTotalCostForChart = hasTVBundle ? gfiberInternetCost + youtubeTVCost : gfiberInternetCost;
 
     const chartData = [
-      {
-        category: 'Cost',
-        'Current Plan': parseFloat(currentCost),
-        'Gfiber Plan': gfiberTotalCostForChart,
-      },
-    ];
-
-    const speedChartData = [
-      {
-        category: 'Download',
-        'Current Plan': parseInt(currentSpeed) || 0,
-        'Gfiber Plan': recommendedGfiberPlan.speedValue || 0,
-      },
-      {
-        category: 'Upload',
-        'Current Plan': parseInt(currentUploadSpeed) || 0,
-        'Gfiber Plan': recommendedGfiberPlan.speedValue || 0,
-      },
+      { name: 'Current Plan', cost: parseFloat(currentCost) },
+      { name: `Gfiber${hasTVBundle ? ' + YouTube TV' : ''}`, cost: gfiberTotalCostForChart },
     ];
 
     const handleGfiberPlanChange = (event) => {
@@ -258,7 +223,7 @@ const App = () => {
     };
 
     return (
-      <div className="flex flex-col items-center p-4 sm:p-6 bg-white rounded-lg shadow-xl max-w-xl sm:max-w-2xl mx-auto">
+      <div className="flex flex-col items-center p-6 bg-white rounded-lg shadow-xl max-w-2xl mx-auto">
         <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">Your Gfiber Savings!</h2>
 
         {errorMessage && (
@@ -272,9 +237,9 @@ const App = () => {
           <label className="block text-lg font-medium text-gray-700 mb-3 text-center">
             Adjust Gfiber Internet Plan:
           </label>
-          <div className="flex flex-wrap justify-center space-x-2 sm:space-x-4">
+          <div className="flex justify-center space-x-4">
             {gfiberPlans.map(plan => (
-              <div key={plan.id} className="flex items-center mb-2 sm:mb-0">
+              <div key={plan.id} className="flex items-center">
                 <input
                   id={`results-gfiber-plan-${plan.id}`}
                   name="results-gfiber-plan"
@@ -296,8 +261,8 @@ const App = () => {
           <label className="block text-lg font-medium text-gray-700 mb-3 text-center">
             Include YouTube TV in Gfiber Total:
           </label>
-          <div className="flex flex-wrap justify-center space-x-2 sm:space-x-4">
-            <div className="flex items-center mb-2 sm:mb-0">
+          <div className="flex justify-center space-x-4">
+            <div className="flex items-center">
               <input
                 id="tv-toggle-yes"
                 name="tv-toggle"
@@ -311,7 +276,7 @@ const App = () => {
                 Yes (Add ${youtubeTVCost.toFixed(2)}/month)
               </label>
             </div>
-            <div className="flex items-center mb-2 sm:mb-0">
+            <div className="flex items-center">
               <input
                 id="tv-toggle-no"
                 name="tv-toggle"
@@ -345,7 +310,6 @@ const App = () => {
           </p>
           {monthlySavings < 0 && (
             <p className="text-red-600 text-sm mt-2">
-              {/* Updated message */}
               (Note: Gfiber cost is currently higher for this comparison. This configuration prioritizes high performance and benefits over pricing)
             </p>
           )}
@@ -358,42 +322,39 @@ const App = () => {
               data={chartData}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
-              <XAxis dataKey="category" />
+              <XAxis dataKey="name" />
               <YAxis label={{ value: 'Cost ($)', angle: -90, position: 'insideLeft', offset: 15 }} />
               <Tooltip formatter={(value) => `$${value.toFixed(2)}`} />
               <Legend wrapperStyle={{ paddingTop: 20 }} />
-              <Bar dataKey="Current Plan" fill="#4285F4" name="Current Plan" radius={[10, 10, 0, 0]} />
-              <Bar dataKey="Gfiber Plan" fill="#34A853" name="Gfiber Plan" radius={[10, 10, 0, 0]} />
+              <Bar dataKey="cost" fill="#4285F4" name="Monthly Cost" radius={[10, 10, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
-        <h3 className="text-2xl font-semibold text-gray-800 mb-4">Speed Comparison (Mbps)</h3>
+        <h3 className="text-2xl font-semibold text-gray-800 mb-4">Yearly Cost Comparison</h3>
         <div className="w-full h-64 mb-8 bg-blue-50 p-4 rounded-lg">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
-              layout="vertical"
-              data={speedChartData}
+              data={chartData.map(item => ({ name: item.name, cost: item.cost * 12 }))}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
-              {/* Adjusted offset to 5 */}
-              <XAxis type="number" label={{ value: 'Speed (Mbps)', angle: 0, position: 'bottom', offset: 5 }} />
-              <YAxis type="category" dataKey="category" />
-              <Tooltip formatter={(value) => `${value.toLocaleString()} Mbps`} />
+              <XAxis dataKey="name" />
+              <YAxis label={{ value: 'Cost ($)', angle: -90, position: 'insideLeft', offset: 15 }} />
+              <Tooltip formatter={(value) => `$${value.toFixed(2)}`} />
               <Legend wrapperStyle={{ paddingTop: 20 }} />
-              <Bar dataKey="Gfiber Plan" fill="#34A853" name="Gfiber Plan" radius={[0, 10, 10, 0]} />
-              <Bar dataKey="Current Plan" fill="#4285F4" name="Current Plan" radius={[0, 10, 10, 0]} />
+              <Bar dataKey="cost" fill="#34A853" name="Yearly Cost" radius={[10, 10, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
+
         <h3 className="text-2xl font-semibold text-gray-800 mb-4">Why Switch to Gfiber?</h3>
-        <ul className="list-disc list-inside text-lg text-gray-700 space-y-2 mb-8 w-full px-2 sm:px-4">
+        <ul className="list-disc list-inside text-lg text-gray-700 space-y-2 mb-8 w-full px-4">
           <li>
-            <strong>Superior Upload Speed:</strong> Crucial for seamless video calls, quick cloud backups, online gaming, and effortlessly sharing large files.
+            <strong>Blazing Fast Uploads:</strong> Essential for flawless video conferencing, rapid cloud backups, smooth live streaming, and effortlessly sharing large files.
           </li>
           <li>
-            <strong>Symmetrical Speeds:</strong> Enjoy equally fast upload and download speeds, perfect for video calls, gaming, and large file sharing. (Unlike most cable providers).
+            <strong>True Symmetrical Performance:</strong> Experience equally fast download and upload speeds, providing a balanced and powerful internet connection for all your online activities, unlike typical cable.
           </li>
           <li>
             <strong>No Data Caps:</strong> Stream, game, and browse as much as you want without worrying about hidden fees or throttling.
@@ -437,7 +398,7 @@ const App = () => {
         </ul>
 
         <p className="text-sm text-gray-500 mt-4 text-center">
-          *All Gfiber, YouTube TV, and competitor plan prices are examples for demonstration purposes only and may vary based on location, promotions and specific service agreements. Please verify current pricing with Gfiber and competitor representatives.
+          *All Gfiber, YouTube TV, and competitor plan prices are examples for demonstration purposes only and may vary based on location, promotions, and specific service agreements. Please verify current pricing with Gfiber and competitor representatives.
         </p>
 
         <button
@@ -445,7 +406,6 @@ const App = () => {
             setStep('welcome');
             setCurrentISP('');
             setCurrentSpeed('');
-            setCurrentUploadSpeed('');
             setCurrentCost('');
             setHasTVBundle(false);
             setSelectedGfiberPlanId('1gig');
