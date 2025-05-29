@@ -3,7 +3,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } fro
 
 // Define gfiberPlans outside the component so it's not recreated on every render
 const gfiberPlans = [
-  { id: '1gig', speed: '1 Gig', cost: 70, speedValue: 1000 }, // Added speedValue for consistency with previous versions
+  { id: '1gig', speed: '1 Gig', cost: 70, speedValue: 1000 },
   { id: '3gig', speed: '3 Gig', cost: 100, speedValue: 3000 },
   { id: '8gig', speed: '8 Gig', cost: 150, speedValue: 8000 },
 ];
@@ -14,7 +14,7 @@ const App = () => {
   const [step, setStep] = useState('welcome');
   const [currentISP, setCurrentISP] = useState('');
   const [currentSpeed, setCurrentSpeed] = useState('');
-  const [currentUploadSpeed, setCurrentUploadSpeed] = useState(''); // Added this back as it was in the previous version
+  const [currentUploadSpeed, setCurrentUploadSpeed] = useState('');
   const [currentCost, setCurrentCost] = useState('');
   const [hasTVBundle, setHasTVBundle] = useState(false);
   const [selectedGfiberPlanId, setSelectedGfiberPlanId] = useState('1gig');
@@ -47,7 +47,7 @@ const App = () => {
     setRecommendedGfiberPlan(currentGfiberPlan);
     setMonthlySavings(calculatedMonthlySavings);
     setYearlySavings(calculatedYearlySavings);
-  }, [selectedGfiberPlanId, hasTVBundle, currentCost]); // youtubeTVCost removed from dependencies as it's a constant outside the component
+  }, [selectedGfiberPlanId, hasTVBundle, currentCost]);
 
   useEffect(() => {
     if (step === 'results' && currentCost && selectedGfiberPlanId) {
@@ -58,7 +58,7 @@ const App = () => {
   const handleISPDetailsSubmit = () => {
     setErrorMessage('');
 
-    if (!currentISP || !currentSpeed || !currentUploadSpeed || !currentCost || !selectedGfiberPlanId) { // Added currentUploadSpeed check
+    if (!currentISP || !currentSpeed || !currentUploadSpeed || !currentCost || !selectedGfiberPlanId) {
       setErrorMessage('Please fill in all details and select a Gfiber plan.');
       return;
     }
@@ -66,7 +66,7 @@ const App = () => {
       setErrorMessage('Please enter a valid current download speed (e.g., 300).');
       return;
     }
-    if (isNaN(parseInt(currentUploadSpeed)) || parseInt(currentUploadSpeed) <= 0) { // Added validation for upload speed
+    if (isNaN(parseInt(currentUploadSpeed)) || parseInt(currentUploadSpeed) <= 0) {
       setErrorMessage('Please enter a valid current upload speed (e.g., 20).');
       return;
     }
@@ -231,8 +231,10 @@ const App = () => {
     const gfiberInternetCost = recommendedGfiberPlan.cost;
     const gfiberTotalCostForChart = hasTVBundle ? gfiberInternetCost + youtubeTVCost : gfiberInternetCost;
 
+    const currentISPName = currentISP || 'Current Plan'; // Use selected ISP name
+
     const chartData = [
-      { name: 'Current Plan', cost: parseFloat(currentCost) },
+      { name: currentISPName, cost: parseFloat(currentCost) },
       { name: `Gfiber${hasTVBundle ? ' + YouTube TV' : ''}`, cost: gfiberTotalCostForChart },
     ];
 
@@ -240,15 +242,27 @@ const App = () => {
     const speedChartData = [
       {
         category: 'Download',
-        'Current Plan': parseInt(currentSpeed) || 0,
+        [currentISPName]: parseInt(currentSpeed) || 0, // Use ISP name here
         'Gfiber Plan': recommendedGfiberPlan.speedValue || 0,
       },
       {
         category: 'Upload',
-        'Current Plan': parseInt(currentUploadSpeed) || 0,
+        [currentISPName]: parseInt(currentUploadSpeed) || 0, // Use ISP name here
         'Gfiber Plan': recommendedGfiberPlan.speedValue || 0, // Assuming symmetrical for Gfiber
       },
     ];
+
+    const getStarRating = (ispType) => {
+        if (ispType === 'Gfiber') {
+            return '★★★★★'; // 5 stars for Fiber
+        }
+        if (ispType === 'T-Mobile Home Internet') {
+            return '★★★☆☆'; // 3 stars for Fixed Wireless
+        }
+        // Default for Cable (Spectrum, AT&T, Astound)
+        return '★★★★☆'; // 4 stars for Cable
+    };
+
 
     const handleGfiberPlanChange = (event) => {
       setSelectedGfiberPlanId(event.target.value);
@@ -396,9 +410,62 @@ const App = () => {
               <Tooltip formatter={(value) => `${value.toLocaleString()} Mbps`} />
               <Legend wrapperStyle={{ paddingTop: 20 }} />
               <Bar dataKey="Gfiber Plan" fill="#34A853" name="Gfiber Plan" radius={[0, 10, 10, 0]} />
-              <Bar dataKey="Current Plan" fill="#4285F4" name="Current Plan" radius={[0, 10, 10, 0]} />
+              <Bar dataKey={currentISPName} fill="#4285F4" name={currentISPName} radius={[0, 10, 10, 0]} /> {/* Use ISP name here */}
             </BarChart>
           </ResponsiveContainer>
+        </div>
+
+        {/* New: Reliability Score */}
+        <h3 className="text-2xl font-semibold text-gray-800 mb-4">Reliability Score (Outage Frequency)</h3>
+        <div className="w-full p-4 bg-yellow-50 rounded-lg shadow-sm mb-8 text-center">
+          <div className="flex justify-around items-center mb-4">
+            <div className="flex flex-col items-center">
+              <p className="text-xl font-bold text-gray-800">Gfiber</p>
+              <p className="text-3xl text-yellow-500 font-bold">{getStarRating('Gfiber')}</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <p className="text-xl font-bold text-gray-800">{currentISPName}</p>
+              <p className="text-3xl text-yellow-500 font-bold">{getStarRating(currentISP)}</p>
+            </div>
+          </div>
+          <p className="text-sm text-gray-600 italic">
+            *Based on general industry data, fiber optic internet (like Gfiber) consistently demonstrates higher reliability and fewer outages compared to traditional cable or fixed wireless services due to fundamental technological advantages. Sources: Various telecom industry analyses and consumer reports on internet service technologies.
+          </p>
+        </div>
+
+        {/* New: Value Beyond Cost Infographic */}
+        <h3 className="text-2xl font-semibold text-gray-800 mb-4">Gfiber: Value Beyond the Monthly Bill</h3>
+        <div className="w-full p-6 bg-purple-50 rounded-lg shadow-sm mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex items-start">
+                    <span className="text-3xl mr-3 text-purple-600">💸</span>
+                    <div>
+                        <h4 className="text-lg font-semibold text-gray-800">No Equipment Rental Fees</h4>
+                        <p className="text-gray-700 text-sm">Save an estimated $10-15/month by owning your modem/router or having equipment included, unlike many cable providers.</p>
+                    </div>
+                </div>
+                <div className="flex items-start">
+                    <span className="text-3xl mr-3 text-purple-600">🚫</span>
+                    <div>
+                        <h4 className="text-lg font-semibold text-gray-800">No Data Caps Ever</h4>
+                        <p className="text-gray-700 text-sm">Stream, game, and download without fear of overage charges or throttling common with some ISPs.</p>
+                    </div>
+                </div>
+                <div className="flex items-start">
+                    <span className="text-3xl mr-3 text-purple-600">🏡</span>
+                    <div>
+                        <h4 className="text-lg font-semibold text-gray-800">Increased Home Value</h4>
+                        <p className="text-gray-700 text-sm">Fiber connectivity can be a significant selling point, adding appeal and value to your home.</p>
+                    </div>
+                </div>
+                <div className="flex items-start">
+                    <span className="text-3xl mr-3 text-purple-600">📞</span>
+                    <div>
+                        <h4 className="text-lg font-semibold text-gray-800">Award-Winning Customer Support</h4>
+                        <p className="text-gray-700 text-sm">Experience responsive and helpful support, minimizing frustration and downtime.</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <h3 className="text-2xl font-semibold text-gray-800 mb-4">Why Switch to Gfiber?</h3>
@@ -440,7 +507,7 @@ const App = () => {
                   <strong>No Equipment Fees:</strong> Say goodbye to costly cable box rentals.
                 </li>
                 <li>
-                  <strong>Stream on Multiple Devices:</strong> Watch on your phone, tablet, smart TV, and more.
+                  <strong>Stream on Multiple Devices:</b> Watch on your phone, tablet, smart TV, and more.
                 </li>
                 <li>
                   <strong>Comprehensive Channels:</strong> Access a wide array of live TV channels from major networks.
