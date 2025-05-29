@@ -375,8 +375,8 @@ const App = () => {
               data={speedChartData}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
-              {/* Adjusted offset to 10 */}
-              <XAxis type="number" label={{ value: 'Speed (Mbps)', angle: 0, position: 'bottom', offset: 10 }} />
+              {/* Adjusted offset to 5 */}
+              <XAxis type="number" label={{ value: 'Speed (Mbps)', angle: 0, position: 'bottom', offset: 5 }} />
               <YAxis type="category" dataKey="category" />
               <Tooltip formatter={(value) => `${value.toLocaleString()} Mbps`} />
               <Legend wrapperStyle={{ paddingTop: 20 }} />
