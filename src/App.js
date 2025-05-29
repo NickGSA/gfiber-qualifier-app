@@ -112,6 +112,8 @@ const App = () => {
           <option value="">Select ISP</option>
           <option value="Spectrum">Spectrum</option>
           <option value="AT&T">AT&T</option>
+          <option value="Astound (Grande)">Astound (Grande)</option>
+          <option value="T-Mobile Home Internet">T-Mobile Home Internet</option>
         </select>
       </div>
 
