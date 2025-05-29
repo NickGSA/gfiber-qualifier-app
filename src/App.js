@@ -228,10 +228,9 @@ const App = () => {
     const gfiberInternetCost = recommendedGfiberPlan.cost;
     const gfiberTotalCostForChart = hasTVBundle ? gfiberInternetCost + youtubeTVCost : gfiberInternetCost;
 
-    // UPDATED: Chart data for Monthly Cost Comparison
     const chartData = [
       {
-        category: 'Monthly Cost',
+        category: 'Cost', // Changed to a generic category for the XAxis
         'Current Plan': parseFloat(currentCost),
         'Gfiber Plan': gfiberTotalCostForChart,
       },
@@ -352,25 +351,25 @@ const App = () => {
         </div>
 
         <h3 className="text-2xl font-semibold text-gray-800 mb-4">Monthly Cost Comparison</h3>
-        <div className="w-full h-64 mb-8">
+        <div className="w-full h-64 mb-8 bg-blue-50 p-4 rounded-lg"> {/* Added background and padding */}
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={chartData}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
-              <XAxis dataKey="category" /> {/* Changed dataKey to 'category' */}
+              <XAxis dataKey="category" />
               <YAxis label={{ value: 'Cost ($)', angle: -90, position: 'insideLeft' }} />
               <Tooltip formatter={(value) => `$${value.toFixed(2)}`} />
               <Legend />
-              {/* Explicitly define two Bar components for Current and Gfiber */}
-              <Bar dataKey="Gfiber Plan" fill="#34A853" name="Gfiber Plan" radius={[10, 10, 0, 0]} />
+              {/* Order changed: Current Plan then Gfiber Plan */}
               <Bar dataKey="Current Plan" fill="#4285F4" name="Current Plan" radius={[10, 10, 0, 0]} />
+              <Bar dataKey="Gfiber Plan" fill="#34A853" name="Gfiber Plan" radius={[10, 10, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
         <h3 className="text-2xl font-semibold text-gray-800 mb-4">Speed Comparison (Mbps)</h3>
-        <div className="w-full h-64 mb-8">
+        <div className="w-full h-64 mb-8 bg-blue-50 p-4 rounded-lg"> {/* Added background and padding */}
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               layout="vertical"
