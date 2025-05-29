@@ -358,16 +358,17 @@ const App = () => {
               <YAxis label={{ value: 'Cost ($)', angle: -90, position: 'insideLeft' }} />
               <Tooltip formatter={(value) => `$${value.toFixed(2)}`} />
               <Legend />
-              <Bar dataKey="cost" name="Monthly Cost" radius={[10, 10, 0, 0]} >
-                {
-                  chartData.map((entry, index) => (
-                    <Bar
-                      key={`cost-bar-${index}`}
-                      fill={entry.name.includes('Current') ? '#4285F4' : '#34A853'}
-                    />
-                  ))
-                }
-              </Bar>
+              {
+                chartData.map((entry, index) => (
+                  <Bar
+                    key={`cost-bar-${index}`}
+                    dataKey="cost"
+                    fill={entry.name.includes('Current') ? '#4285F4' : '#34A853'}
+                    name={entry.name}
+                    radius={[10, 10, 0, 0]}
+                  />
+                ))
+              }
             </BarChart>
           </ResponsiveContainer>
         </div>
